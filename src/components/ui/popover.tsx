@@ -41,7 +41,8 @@ function PopoverContent({
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "z-[9999] bg-popover text-popover-foreground border p-4 rounded-md shadow-md outline-none w-72",
+        "!z-[9999999999999999999]",
+        "bg-popover text-popover-foreground border p-4 rounded-md shadow-md outline-none w-72",
         "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
         "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
         "data-[side=bottom]:slide-in-from-top-2",

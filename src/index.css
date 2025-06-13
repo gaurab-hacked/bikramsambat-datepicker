@@ -118,3 +118,7 @@
     @apply bg-background text-foreground;
   }
 }
+/* fix Radix Popover z-index stacking */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999999999999999999 !important;
+}
