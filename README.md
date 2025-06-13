@@ -3,48 +3,26 @@
 
 A beautiful and feature-rich Nepali (Bikram Sambat) date picker component for React applications. Supports dual language display (English/Nepali) with full Bikram Sambat calendar functionality.
 
-[![npm version](https://badge.fury.io/js/nepali-datepicker-react.svg)](https://badge.fury.io/js/nepali-datepicker-react)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/%3C%2F%3E-TypeScript-%230074c1.svg)](http://www.typescriptlang.org/)
-
-## ✨ Features
-
-- 📅 **Complete Bikram Sambat Support** - Years 2000-2099 BS
-- 🌐 **Dual Language** - English and Nepali (Devanagari) support
-- 🎯 **Multiple View Modes** - Days, Months, and Years navigation
-- 🚫 **Future Date Control** - Optional future date restrictions
-- 🎨 **Fully Customizable** - CSS classes and styling support
-- ♿ **Accessible** - ARIA compliant and keyboard navigation
-- 📱 **Responsive** - Works on all device sizes
-- 🔧 **TypeScript** - Full type safety and IntelliSense support
-- 🎪 **shadcn/ui Integration** - Built with modern UI components
-
 ## 📦 Installation
 
 ```bash
-npm install nepali-datepicker-react
+npm install bikramsambat-datepicker
 ```
 ````
 
 ```bash
-yarn add nepali-datepicker-react
+yarn add bikramsambat-datepicker
 ```
 
 ```bash
-pnpm add nepali-datepicker-react
-```
-
-### Peer Dependencies
-
-```bash
-npm install react react-dom bikram-sambat-js nepali-number lucide-react
+pnpm add bikramsambat-datepicker
 ```
 
 ## 🚀 Quick Start
 
 ```tsx
 import React, { useState } from "react";
-import NepaliDatePicker from "nepali-datepicker-react";
+import NepaliDatePicker from "bikramsambat-datepicker";
 
 function App() {
   const [selectedDate, setSelectedDate] = useState<string>("");
@@ -90,7 +68,7 @@ The component uses `YYYY-MM-DD` format for Bikram Sambat dates:
 ### Basic Usage
 
 ```tsx
-import NepaliDatePicker from "nepali-datepicker-react";
+import NepaliDatePicker from "bikramsambat-datepicker";
 
 function BasicExample() {
   const [date, setDate] = useState<string>("");
@@ -267,7 +245,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 git clone https://github.com/gaurab-hacked/bikramsambat-datepicker
-cd nepali-datepicker-react
+cd bikramsambat-datepicker
 ```
 
 2. Install dependencies
