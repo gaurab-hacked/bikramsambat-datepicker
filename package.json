@@ -1,0 +1,54 @@
+{
+  "name": "bikramsambat-datepicker",
+  "description": "A comprehensive Nepali (Bikram Sambat) DatePicker component for React applications with accurate Nepali calendar support.",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "./dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.build.json",
+    "lint": "eslint . --ext .ts,.tsx",
+    "preview": "vite preview",
+    "prepare": "npm run build"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "dependencies": {
+    "@radix-ui/react-popover": "^1.1.14",
+    "bikram-sambat-js": "^1.0.2",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.515.0",
+    "nepali-number": "^1.0.3",
+    "tailwind-merge": "^3.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "eslint": "^9.25.0"
+  },
+  "keywords": [
+    "nepali",
+    "date-picker",
+    "calendar",
+    "nepali calendar",
+    "bs date",
+    "nepali date picker",
+    "accurate nepali date picker"
+  ],
+  "author": "Gaurab sunar",
+  "license": "MIT"
+}
