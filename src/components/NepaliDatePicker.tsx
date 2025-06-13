@@ -2,8 +2,17 @@
 
 import * as React from "react";
 import { BSToAD } from "bikram-sambat-js";
-
+import {
+  CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
 import { englishToNepaliNumber } from "nepali-number";
+import { cn } from "../lib/utils";
+import { Button } from "./ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export const NEPALI = "ne";
 
@@ -250,7 +259,6 @@ function formatNepaliDate(date: string, locale: "en" | "ne") {
 }
 
 type ViewMode = "days" | "months" | "years";
-
 const NepaliDatePicker = ({
   className,
   value,
@@ -304,43 +312,6 @@ const NepaliDatePicker = ({
     }
     return { start, end };
   });
-
-  const popoverRef = React.useRef<HTMLDivElement>(null);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
-
-  // Close popover when clicking outside
-  React.useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popoverRef.current &&
-        !popoverRef.current.contains(event.target as Node) &&
-        triggerRef.current &&
-        !triggerRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener("mousedown", handleClickOutside);
-      return () =>
-        document.removeEventListener("mousedown", handleClickOutside);
-    }
-  }, [open]);
-
-  // Handle ESC key
-  React.useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && open) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener("keydown", handleEscape);
-      return () => document.removeEventListener("keydown", handleEscape);
-    }
-  }, [open]);
 
   React.useEffect(() => {
     if (value !== undefined) {
@@ -508,6 +479,7 @@ const NepaliDatePicker = ({
       month: displayedMonthYear.month,
     });
 
+    // Use our fixed calculation for the first day of month
     const firstDayOfMonth = calculateFirstDayOfMonth(
       displayedMonthYear.year,
       displayedMonthYear.month
@@ -515,6 +487,7 @@ const NepaliDatePicker = ({
 
     const totalDaysToShow = Math.ceil((firstDayOfMonth + daysInMonth) / 7) * 7;
 
+    // Get previous month info for leading days
     let prevMonth = displayedMonthYear.month - 1;
     let prevYear = displayedMonthYear.year;
     if (prevMonth < 1) {
@@ -557,63 +530,40 @@ const NepaliDatePicker = ({
     });
 
     return (
-      <div className="p-1">
-        <div className="grid grid-cols-7 gap-1 mb-3">
+      <>
+        <div className="mb-2 grid grid-cols-7 gap-2">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
             (day, index) => (
               <div
                 key={day}
-                className={`
-                  flex h-9 items-center justify-center text-center text-xs font-medium tracking-wide uppercase
-                  ${index === 6 ? "text-red-600" : "text-slate-600"}
-                `}
+                className={cn(
+                  "flex h-8 items-center justify-center text-center text-sm font-medium",
+                  index === 6 && "text-red-500"
+                )}
               >
                 {day}
               </div>
             )
           )}
         </div>
-
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-2">
           {days.map((dayData, index) => (
-            <button
+            <Button
               key={index}
-              type="button"
+              variant="ghost"
+              size="sm"
               disabled={dayData.isDisabled}
-              className={`
-                relative h-9 w-9 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out
-                focus:outline-none focus:ring-2 border border-slate-200/30 focus:ring-slate-200 focus:ring-offset-1 focus:z-10
-                ${
-                  !dayData.isCurrentMonth
-                    ? "text-slate-400 hover:text-slate-500"
-                    : "text-slate-900"
-                }
-                ${
-                  dayData.isToday && !dayData.isSelected
-                    ? "bg-blue-100 text-slate-300 font-medium ring-1 ring-blue-300 hover:bg-blue-200"
-                    : ""
-                }
-                ${
-                  dayData.isSelected
-                    ? "bg-blue-600 text-white font-medium shadow-sm hover:bg-slate-300 ring-1 ring-blue-600"
-                    : !dayData.isToday && dayData.isCurrentMonth
-                    ? "hover:bg-slate-100"
-                    : ""
-                }
-                ${
-                  dayData.isDisabled
-                    ? "cursor-not-allowed opacity-40 hover:bg-transparent"
-                    : "cursor-pointer"
-                }
-                ${
-                  dayData.isSaturday &&
+              className={cn(
+                "h-8 w-8 p-0 font-normal",
+                !dayData.isCurrentMonth && "text-muted-foreground opacity-50",
+                dayData.isToday && "bg-accent text-accent-foreground",
+                dayData.isSelected && "bg-primary text-primary-foreground",
+                dayData.isDisabled && "cursor-not-allowed opacity-50",
+                dayData.isSaturday &&
                   !dayData.isToday &&
                   !dayData.isSelected &&
-                  dayData.isCurrentMonth
-                    ? "text-red-600 hover:bg-red-50"
-                    : ""
-                }
-              `}
+                  "text-red-500"
+              )}
               onClick={() => {
                 if (dayData.isCurrentMonth && !dayData.isDisabled) {
                   handleDateSelect({
@@ -627,10 +577,10 @@ const NepaliDatePicker = ({
               {locale === NEPALI
                 ? englishToNepaliNumber(dayData.day)
                 : dayData.day}
-            </button>
+            </Button>
           ))}
         </div>
-      </div>
+      </>
     );
   };
 
@@ -638,38 +588,28 @@ const NepaliDatePicker = ({
     if (!displayedMonthYear) return null;
 
     return (
-      <div className="grid grid-cols-3 gap-2 p-2">
+      <div className="grid grid-cols-3 gap-2">
         {months[locale].map((month, index) => {
           const monthNumber = index + 1;
           const disabled = isDisabled(displayedMonthYear.year, monthNumber);
-          const isSelected =
-            parsedDate &&
-            parsedDate.bsMonth === monthNumber &&
-            parsedDate.bsYear === displayedMonthYear.year;
 
           return (
-            <button
+            <Button
               key={month}
-              type="button"
+              variant="ghost"
               disabled={disabled}
-              className={`
-                h-11 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out
-                focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1
-                ${
-                  disabled
-                    ? "cursor-not-allowed opacity-40 bg-slate-50 text-slate-400"
-                    : "cursor-pointer"
-                }
-                ${
-                  isSelected
-                    ? "bg-blue-600 text-white font-medium shadow-sm hover:bg-slate-300"
-                    : "bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                }
-              `}
+              className={cn(
+                "h-10",
+                disabled && "cursor-not-allowed opacity-50",
+                parsedDate &&
+                  parsedDate.bsMonth === monthNumber &&
+                  parsedDate.bsYear === displayedMonthYear.year &&
+                  "bg-primary text-primary-foreground"
+              )}
               onClick={() => !disabled && handleMonthSelect(monthNumber)}
             >
               {month}
-            </button>
+            </Button>
           );
         })}
       </div>
@@ -683,294 +623,183 @@ const NepaliDatePicker = ({
     ).filter((year) => year >= 2000 && year <= 2099);
 
     return (
-      <div className="grid grid-cols-4 gap-2 p-2">
+      <div className="grid grid-cols-4 gap-2">
         {years.map((year) => {
           const disabled = isDisabled(year);
           const isSelected = parsedDate && parsedDate.bsYear === year;
           const isCurrentYear = year === today.bsYear;
 
           return (
-            <button
+            <Button
               key={year}
-              type="button"
+              variant="ghost"
               disabled={disabled}
-              className={`
-                h-11 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ease-in-out
-                focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1
-                ${
-                  disabled
-                    ? "cursor-not-allowed opacity-40 bg-slate-50 text-slate-400"
-                    : "cursor-pointer"
-                }
-                ${
-                  isSelected
-                    ? "bg-blue-600 text-white font-medium shadow-sm hover:bg-slate-300"
-                    : "bg-slate-50 text-slate-700 hover:bg-slate-100 hover:text-slate-900"
-                }
-                ${
-                  !isSelected && isCurrentYear
-                    ? "ring-1 ring-blue-300 bg-blue-50 text-slate-300"
-                    : ""
-                }
-              `}
+              className={cn(
+                "h-10",
+                disabled && "cursor-not-allowed opacity-50",
+                isSelected && "bg-primary text-primary-foreground",
+                !isSelected && isCurrentYear && "border-primary border"
+              )}
               onClick={() => !disabled && handleYearSelect(year)}
             >
               {locale === NEPALI ? englishToNepaliNumber(year) : year}
-            </button>
+            </Button>
           );
         })}
       </div>
     );
   };
 
+  // Use the displayedMonthYear for header display but fallback to selected date or today
   const displayMonthYear =
     displayedMonthYear ||
     (parsedDate
       ? { year: parsedDate.bsYear, month: parsedDate.bsMonth }
       : { year: today.bsYear, month: today.bsMonth });
 
-  // Initialize displayedMonthYear when component mounts
-  React.useEffect(() => {
-    if (!displayedMonthYear) {
-      setDisplayedMonthYear(
-        parsedDate
-          ? { year: parsedDate.bsYear, month: parsedDate.bsMonth }
-          : { year: today.bsYear, month: today.bsMonth }
-      );
-    }
-  }, [parsedDate, displayedMonthYear]);
-
   return (
-    <div className="relative">
-      <button
-        ref={triggerRef}
-        type="button"
-        className={`
-          group flex w-full min-w-[200px] items-center justify-between rounded-lg border border-slate-300 bg-white px-4 h-10 py-2 text-left text-sm font-medium
-          shadow-sm transition-all duration-200 ease-in-out
-          hover:border-slate-400 hover:shadow-md 
-          ${!value ? "text-slate-500" : "text-slate-900"}
-          ${
-            disabled
-              ? "cursor-not-allowed opacity-60 bg-slate-50 hover:border-slate-300 hover:shadow-sm"
-              : "cursor-pointer"
-          }
-          ${className}
-        `}
-        disabled={disabled}
-        onClick={() => setOpen(!open)}
-        {...otherProps}
-      >
-        <span className="flex items-center">
-          {date ? (
-            <span className="font-medium">
-              {formatNepaliDate(date, locale)}
-            </span>
-          ) : (
-            <span className="text-slate-500">{placeholder}</span>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "hover:bg-card w-full min-w-[180px] justify-between px-3 text-left font-normal",
+            !value && "text-muted-foreground",
+            className,
+            disabled && "cursor-not-allowed opacity-50"
           )}
-        </span>
-        <svg
-          className={`h-4 w-4 transition-transform duration-200 ${
-            open ? "rotate-180" : ""
-          } ${
-            disabled
-              ? "text-slate-400"
-              : "text-slate-600 group-hover:text-slate-700"
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+          disabled={disabled}
+          {...otherProps}
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 9l-7 7-7-7"
-          />
-        </svg>
-      </button>
-
-      {open && (
-        <>
-          <div className="fixed inset-0 z-40" />
-
-          <div
-            ref={popoverRef}
-            className="absolute top-full left-0 z-50 mt-2 rounded-xl border border-slate-200 bg-white shadow-xl ring-opacity-5"
-            style={{ minWidth: "320px" }}
-          >
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 bg-slate-50 rounded-t-xl">
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={handlePreviousYear}
-                  className="flex h-8 w-8 items-center justify-center rounded-md text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
-                  disabled={
-                    viewMode === "years"
-                      ? yearRange.start <= 2000
-                      : displayedMonthYear
-                      ? displayedMonthYear.year <= 2000
-                      : false
-                  }
-                >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-
-                {viewMode === "days" && (
-                  <button
-                    type="button"
-                    onClick={handlePreviousMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-md text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
-                    disabled={
-                      displayedMonthYear?.year === 2000 &&
-                      displayedMonthYear?.month === 1
-                    }
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-
-              <button
-                type="button"
-                className="px-3 py-1 text-sm font-medium text-slate-900 rounded-md hover:bg-white hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 transition-all duration-150"
-                onClick={() =>
-                  setViewMode(viewMode === "days" ? "months" : "years")
+          {date ? formatNepaliDate(date, locale) : <span>{placeholder}</span>}
+          <CalendarIcon className="h-4 w-4" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="start" className="w-auto p-0">
+        <div className="px-3 py-2">
+          <div className="mb-1 flex items-center justify-between border-b pb-1">
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handlePreviousYear}
+                className="h-8 w-8 p-0"
+                disabled={
+                  viewMode === "years"
+                    ? yearRange.start <= 2000
+                    : displayedMonthYear
+                    ? displayedMonthYear.year <= 2000
+                    : false
                 }
               >
-                {viewMode === "days" && (
-                  <>
-                    {months[locale][displayMonthYear.month - 1]}{" "}
-                    {locale === NEPALI
-                      ? englishToNepaliNumber(displayMonthYear.year)
-                      : displayMonthYear.year}
-                  </>
-                )}
-                {viewMode === "months" &&
-                  (locale === NEPALI
-                    ? englishToNepaliNumber(displayMonthYear.year)
-                    : displayMonthYear.year)}
-                {viewMode === "years" &&
-                  `${yearRange.start} - ${yearRange.end}`}
-              </button>
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
 
-              <div className="flex items-center gap-1">
-                {viewMode === "days" && (
-                  <button
-                    type="button"
-                    onClick={handleNextMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-md text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
-                    disabled={
-                      (disableFuture &&
-                        displayMonthYear.year >= today.bsYear &&
-                        displayMonthYear.month >= today.bsMonth) ||
-                      (displayedMonthYear?.year === 2099 &&
-                        displayedMonthYear?.month === 12)
-                    }
-                  >
-                    <svg
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={handleNextYear}
-                  className="flex h-8 w-8 items-center justify-center rounded-md text-slate-600 hover:bg-white hover:text-slate-900 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-150"
+              {viewMode === "days" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePreviousMonth}
+                  className="h-8 w-8 p-0"
                   disabled={
-                    viewMode === "years"
-                      ? (disableFuture && yearRange.end >= today.bsYear) ||
-                        yearRange.end >= 2099
-                      : displayedMonthYear
-                      ? (disableFuture &&
-                          displayedMonthYear.year >= today.bsYear) ||
-                        displayedMonthYear.year >= 2099
-                      : false
+                    displayedMonthYear?.year === 2000 &&
+                    displayedMonthYear?.month === 1
                   }
                 >
-                  <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-b-xl">
-              {viewMode === "days" && renderDaysView()}
-              {viewMode === "months" && renderMonthsView()}
-              {viewMode === "years" && renderYearsView()}
-
-              {showTodayButton && (
-                <div className="flex justify-center border-t border-slate-100 px-4 py-3">
-                  <button
-                    type="button"
-                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-1 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-150"
-                    onClick={() => {
-                      const todayDate = "2082-02-02";
-                      setDate(todayDate);
-                      onChange?.(todayDate);
-                      setOpen(false);
-                      setViewMode("days");
-                    }}
-                    disabled={
-                      disableFuture &&
-                      isDisabled(today.bsYear, today.bsMonth, today.bsDay)
-                    }
-                  >
-                    {locale === NEPALI ? "आज" : "Today"}
-                  </button>
-                </div>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
               )}
             </div>
+
+            <Button
+              variant="ghost"
+              className="px-4 font-medium select-none"
+              onClick={() =>
+                setViewMode(viewMode === "days" ? "months" : "years")
+              }
+            >
+              {viewMode === "days" && (
+                <>
+                  {months[locale][displayMonthYear.month - 1]}{" "}
+                  {locale === NEPALI
+                    ? englishToNepaliNumber(displayMonthYear.year)
+                    : displayMonthYear.year}
+                </>
+              )}
+              {viewMode === "months" &&
+                (locale === NEPALI
+                  ? englishToNepaliNumber(displayMonthYear.year)
+                  : displayMonthYear.year)}
+              {viewMode === "years" && `${yearRange.start} - ${yearRange.end}`}
+            </Button>
+
+            <div className="flex gap-1">
+              {viewMode === "days" && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleNextMonth}
+                  className="h-8 w-8 p-0"
+                  disabled={
+                    (disableFuture &&
+                      displayMonthYear.year >= today.bsYear &&
+                      displayMonthYear.month >= today.bsMonth) ||
+                    (displayedMonthYear?.year === 2099 &&
+                      displayedMonthYear?.month === 12)
+                  }
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNextYear}
+                className="h-8 w-8 p-0"
+                disabled={
+                  viewMode === "years"
+                    ? (disableFuture && yearRange.end >= today.bsYear) ||
+                      yearRange.end >= 2099
+                    : displayedMonthYear
+                    ? (disableFuture &&
+                        displayedMonthYear.year >= today.bsYear) ||
+                      displayedMonthYear.year >= 2099
+                    : false
+                }
+              >
+                <ChevronsRight className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-        </>
-      )}
-    </div>
+
+          {viewMode === "days" && renderDaysView()}
+          {viewMode === "months" && renderMonthsView()}
+          {viewMode === "years" && renderYearsView()}
+
+          {showTodayButton && (
+            <div className="mt-4 flex justify-center">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const todayDate = "2082-02-02";
+                  setDate(todayDate);
+                  onChange?.(todayDate);
+                  setOpen(false);
+                  setViewMode("days");
+                }}
+                disabled={
+                  disableFuture &&
+                  isDisabled(today.bsYear, today.bsMonth, today.bsDay)
+                }
+              >
+                {locale === NEPALI ? "आज" : "Today"}
+              </Button>
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 };
 
