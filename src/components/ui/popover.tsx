@@ -8,7 +8,7 @@ function Popover({
   ...props
 }: React.ComponentProps<typeof PopoverPrimitive.Root>) {
   return (
-    <PopoverPrimitive.Root modal {...props}>
+    <PopoverPrimitive.Root modal={false} {...props}>
       {children}
     </PopoverPrimitive.Root>
   );

@@ -283,6 +283,12 @@ const NepaliDatePicker = ({
   const [date, setDate] = React.useState<string | undefined>(value);
   const [open, setOpen] = React.useState(false);
   const [viewMode, setViewMode] = React.useState<ViewMode>("days");
+  React.useEffect(() => {
+    return () => {
+      document.body.style.pointerEvents = "auto";
+      document.body.style.userSelect = "auto";
+    };
+  }, []);
 
   const today = React.useMemo(() => {
     return {
