@@ -13,6 +13,7 @@ import { englishToNepaliNumber } from "nepali-number";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import "../index.css";
 
 export const NEPALI = "ne";
 
