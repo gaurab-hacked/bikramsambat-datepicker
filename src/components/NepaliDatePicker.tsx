@@ -582,7 +582,7 @@ const NepaliDatePicker = ({
               disabled={dayData.isDisabled}
               className={`
                 relative h-9 w-9 text-sm font-medium rounded-lg transition-all duration-200 ease-in-out
-                focus:outline-none focus:ring-2 border border-slate-200/50 focus:ring-slate-200 focus:ring-offset-1 focus:z-10
+                focus:outline-none focus:ring-2 border border-slate-200/30 focus:ring-slate-200 focus:ring-offset-1 focus:z-10
                 ${
                   !dayData.isCurrentMonth
                     ? "text-slate-400 hover:text-slate-500"
@@ -590,7 +590,7 @@ const NepaliDatePicker = ({
                 }
                 ${
                   dayData.isToday && !dayData.isSelected
-                    ? "bg-blue-50 text-slate-300 font-medium ring-1 ring-blue-200 hover:bg-blue-100"
+                    ? "bg-blue-100 text-slate-300 font-medium ring-1 ring-blue-300 hover:bg-blue-200"
                     : ""
                 }
                 ${
@@ -746,9 +746,9 @@ const NepaliDatePicker = ({
         ref={triggerRef}
         type="button"
         className={`
-          group flex w-full min-w-[200px] items-center justify-between rounded-lg border border-slate-300 bg-white px-4 py-3 text-left text-sm font-medium
+          group flex w-full min-w-[200px] items-center justify-between rounded-lg border border-slate-300 bg-white px-4 h-10 py-2 text-left text-sm font-medium
           shadow-sm transition-all duration-200 ease-in-out
-          hover:border-slate-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-slate-200 focus:ring-offset-2 focus:border-slate-100
+          hover:border-slate-400 hover:shadow-md 
           ${!value ? "text-slate-500" : "text-slate-900"}
           ${
             disabled
