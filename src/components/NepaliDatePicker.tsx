@@ -675,7 +675,7 @@ const NepaliDatePicker = ({
           <CalendarIcon className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto p-0">
+      <PopoverContent align="start" disablePortal className="w-auto p-0">
         <div className="px-3 py-2">
           <div className="mb-1 flex items-center justify-between border-b pb-1">
             <div className="flex gap-1">
