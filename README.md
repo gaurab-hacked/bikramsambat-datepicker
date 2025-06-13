@@ -266,7 +266,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 1. Clone the repository
 
 ```bash
-git clone https://github.com/gaurab-hacked/nepali-datepicker-react.git
+git clone https://github.com/gaurab-hacked/bikramsambat-datepicker
 cd nepali-datepicker-react
 ```
 
@@ -300,9 +300,9 @@ MIT © [Gaurab sunar](https://github.com/gaurab-hacked)
 
 ## 🐛 Issues & Support
 
-- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/gaurab-hacked/nepali-datepicker-react/issues)
-- 💬 **Discussions**: [GitHub Discussions](https://github.com/gaurab-hacked/nepali-datepicker-react/discussions)
-- 📧 **Email**: your-email@example.com
+- 🐛 **Bug Reports**: [GitHub Issues](https://github.com/gaurab-hacked/bikramsambat-datepicker/issues)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/gaurab-hacked/bikramsambat-datepicker/discussions)
+- 📧 **Email**: gaurabsunar0001@gmail.com
 
 ## 🙏 Acknowledgments
 
