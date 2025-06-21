@@ -9,10 +9,8 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import { englishToNepaliNumber } from "nepali-number";
-import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import "../index.css";
 
 export const NEPALI = "ne";
 
@@ -205,14 +203,12 @@ function calculateFirstDayOfMonth(year: number, month: number): number {
   }
 
   // Add days for complete months in the current year
-  const yearIndex = year - 2000;
-  if (yearIndex < bsCalendarData.length) {
-    for (let m = 1; m < month; m++) {
-      totalDays += bsCalendarData[yearIndex][m - 1];
-    }
+  for (let m = 1; m < month; m++) {
+    totalDays += getNumberOfDaysInBSMonth({ year, month: m });
   }
 
-  // Calculate the day of week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+  // Calculate the day of week for the first day of the month
+  // BS 2000/1/1 was Wednesday (day 3)
   return (BS_2000_1_1_DAY_OF_WEEK + totalDays) % 7;
 }
 
@@ -537,39 +533,30 @@ const NepaliDatePicker = ({
 
     return (
       <>
-        <div className="mb-2 grid grid-cols-7 gap-2">
-          {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(
-            (day, index) => (
-              <div
-                key={day}
-                className={cn(
-                  "flex h-8 items-center justify-center text-center text-sm font-medium",
-                  index === 6 && "text-red-500"
-                )}
-              >
-                {day}
-              </div>
-            )
-          )}
+        <div className="bikramsambat-datepicker-calendar-header">
+          {weeks[locale].map((day, index) => (
+            <div
+              key={day}
+              className={`bikramsambat-datepicker-calendar-cell ${
+                index === 6 ? "saturday" : ""
+              }`}
+            >
+              {day}
+            </div>
+          ))}
         </div>
-        <div className="grid grid-cols-7 gap-2">
+        <div className="bikramsambat-datepicker-calendar">
           {days.map((dayData, index) => (
-            <Button
+            <button
               key={index}
-              variant="ghost"
-              size="sm"
               disabled={dayData.isDisabled}
-              className={cn(
-                "h-8 w-8 p-0 font-normal",
-                !dayData.isCurrentMonth && "text-muted-foreground opacity-50",
-                dayData.isToday && "bg-accent text-accent-foreground",
-                dayData.isSelected && "bg-primary text-primary-foreground",
-                dayData.isDisabled && "cursor-not-allowed opacity-50",
-                dayData.isSaturday &&
-                  !dayData.isToday &&
-                  !dayData.isSelected &&
-                  "text-red-500"
-              )}
+              className={`bikramsambat-datepicker-calendar-cell ${
+                !dayData.isCurrentMonth ? "opacity-50" : ""
+              } ${dayData.isToday ? "today" : ""} ${
+                dayData.isSelected ? "selected" : ""
+              } ${dayData.isDisabled ? "disabled" : ""} ${
+                dayData.isSaturday ? "saturday" : ""
+              }`}
               onClick={() => {
                 if (dayData.isCurrentMonth && !dayData.isDisabled) {
                   handleDateSelect({
@@ -583,7 +570,7 @@ const NepaliDatePicker = ({
               {locale === NEPALI
                 ? englishToNepaliNumber(dayData.day)
                 : dayData.day}
-            </Button>
+            </button>
           ))}
         </div>
       </>
@@ -594,7 +581,7 @@ const NepaliDatePicker = ({
     if (!displayedMonthYear) return null;
 
     return (
-      <div className="grid grid-cols-3 gap-2">
+      <div className="bikramsambat-datepicker-months-grid">
         {months[locale].map((month, index) => {
           const monthNumber = index + 1;
           const disabled = isDisabled(displayedMonthYear.year, monthNumber);
@@ -604,14 +591,13 @@ const NepaliDatePicker = ({
               key={month}
               variant="ghost"
               disabled={disabled}
-              className={cn(
-                "h-10",
-                disabled && "cursor-not-allowed opacity-50",
+              className={`bikramsambat-datepicker-month-button ${
                 parsedDate &&
-                  parsedDate.bsMonth === monthNumber &&
-                  parsedDate.bsYear === displayedMonthYear.year &&
-                  "bg-primary text-primary-foreground"
-              )}
+                parsedDate.bsMonth === monthNumber &&
+                parsedDate.bsYear === displayedMonthYear.year
+                  ? "selected"
+                  : ""
+              }`}
               onClick={() => !disabled && handleMonthSelect(monthNumber)}
             >
               {month}
@@ -629,7 +615,7 @@ const NepaliDatePicker = ({
     ).filter((year) => year >= 2000 && year <= 2099);
 
     return (
-      <div className="grid grid-cols-4 gap-2">
+      <div className="bikramsambat-datepicker-years-grid">
         {years.map((year) => {
           const disabled = isDisabled(year);
           const isSelected = parsedDate && parsedDate.bsYear === year;
@@ -640,12 +626,9 @@ const NepaliDatePicker = ({
               key={year}
               variant="ghost"
               disabled={disabled}
-              className={cn(
-                "h-10",
-                disabled && "cursor-not-allowed opacity-50",
-                isSelected && "bg-primary text-primary-foreground",
-                !isSelected && isCurrentYear && "border-primary border"
-              )}
+              className={`bikramsambat-datepicker-year-button ${
+                isSelected ? "selected" : ""
+              } ${!isSelected && isCurrentYear ? "current-year" : ""}`}
               onClick={() => !disabled && handleYearSelect(year)}
             >
               {locale === NEPALI ? englishToNepaliNumber(year) : year}
@@ -668,33 +651,27 @@ const NepaliDatePicker = ({
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
-            variant={"outline"}
-            className={cn(
-              "hover:bg-card w-full min-w-[180px] justify-between px-3 text-left font-normal",
-              !value && "text-muted-foreground",
-              className,
-              disabled && "cursor-not-allowed opacity-50"
-            )}
+            variant="outline"
+            className={`bikramsambat-datepicker-trigger ${className || ""}`}
             disabled={disabled}
             {...otherProps}
           >
             {date ? formatNepaliDate(date, locale) : <span>{placeholder}</span>}
-            <CalendarIcon className="h-4 w-4" />
+            <CalendarIcon className="bikramsambat-calendar-icon" />
           </Button>
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          disablePortal
-          className="w-auto !z-[9999999999999999999] p-0"
+          className="bikramsambat-datepicker-popover"
         >
-          <div className="px-3 py-2">
-            <div className="mb-1 flex items-center justify-between border-b pb-1">
-              <div className="flex gap-1">
+          <div className="bikramsambat-datepicker-content">
+            <div className="bikramsambat-datepicker-header">
+              <div className="bikramsambat-datepicker-nav">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handlePreviousYear}
-                  className="h-8 w-8 p-0"
+                  className="bikramsambat-nav-button"
                   disabled={
                     viewMode === "years"
                       ? yearRange.start <= 2000
@@ -703,7 +680,7 @@ const NepaliDatePicker = ({
                       : false
                   }
                 >
-                  <ChevronsLeft className="h-4 w-4" />
+                  <ChevronsLeft className="bikramsambat-icon" />
                 </Button>
 
                 {viewMode === "days" && (
@@ -711,20 +688,20 @@ const NepaliDatePicker = ({
                     variant="ghost"
                     size="sm"
                     onClick={handlePreviousMonth}
-                    className="h-8 w-8 p-0"
+                    className="bikramsambat-nav-button"
                     disabled={
                       displayedMonthYear?.year === 2000 &&
                       displayedMonthYear?.month === 1
                     }
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="bikramsambat-icon" />
                   </Button>
                 )}
               </div>
 
               <Button
                 variant="ghost"
-                className="px-4 font-medium select-none"
+                className="bikramsambat-datepicker-title"
                 onClick={() =>
                   setViewMode(viewMode === "days" ? "months" : "years")
                 }
@@ -745,13 +722,13 @@ const NepaliDatePicker = ({
                   `${yearRange.start} - ${yearRange.end}`}
               </Button>
 
-              <div className="flex gap-1">
+              <div className="bikramsambat-datepicker-nav">
                 {viewMode === "days" && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleNextMonth}
-                    className="h-8 w-8 p-0"
+                    className="bikramsambat-nav-button"
                     disabled={
                       (disableFuture &&
                         displayMonthYear.year >= today.bsYear &&
@@ -760,14 +737,14 @@ const NepaliDatePicker = ({
                         displayedMonthYear?.month === 12)
                     }
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="bikramsambat-icon" />
                   </Button>
                 )}
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleNextYear}
-                  className="h-8 w-8 p-0"
+                  className="bikramsambat-nav-button"
                   disabled={
                     viewMode === "years"
                       ? (disableFuture && yearRange.end >= today.bsYear) ||
@@ -779,7 +756,7 @@ const NepaliDatePicker = ({
                       : false
                   }
                 >
-                  <ChevronsRight className="h-4 w-4" />
+                  <ChevronsRight className="bikramsambat-icon" />
                 </Button>
               </div>
             </div>
@@ -789,7 +766,7 @@ const NepaliDatePicker = ({
             {viewMode === "years" && renderYearsView()}
 
             {showTodayButton && (
-              <div className="mt-4 flex justify-center">
+              <div className="bikramsambat-today-button-container">
                 <Button
                   variant="outline"
                   size="sm"
