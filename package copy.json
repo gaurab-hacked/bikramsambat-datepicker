@@ -1,7 +1,7 @@
 {
   "name": "bikramsambat-datepicker",
   "description": "A comprehensive Nepali (Bikram Sambat) DatePicker component for React applications with accurate Nepali calendar support.",
-  "version": "1.2.1",
+  "version": "1.0.18",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,9 +16,9 @@
     }
   },
   "scripts": {
+    "build:css": "tailwindcss -i ./src/style.css -o ./dist/style.css --postcss",
     "dev": "vite",
     "build": "tsc -p tsconfig.build.json && npm run build:css",
-    "build:css": "npx @tailwindcss/cli -i ./src/index.css -o ./dist/index.css",
     "copy-css": "node copy-css.js",
     "lint": "eslint . --ext .ts,.tsx",
     "preview": "vite preview",
