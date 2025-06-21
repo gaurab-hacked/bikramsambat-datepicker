@@ -55,6 +55,12 @@ function PopoverContent({
           zIndex: 999999999,
           position: "relative",
         }}
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+        }}
+        onCloseAutoFocus={(e) => {
+          e.preventDefault();
+        }}
         {...props}
       >
         {children}

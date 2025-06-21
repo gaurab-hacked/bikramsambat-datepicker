@@ -683,6 +683,12 @@ const NepaliDatePicker = ({
             variant="outline"
             className={`bikramsambat-datepicker-trigger ${className || ""}`}
             disabled={disabled}
+            onMouseDown={(e) => {
+              if (e.button !== 0) {
+                e.preventDefault();
+              }
+              e.stopPropagation();
+            }}
             {...otherProps}
           >
             {date ? formatNepaliDate(date, locale) : <span>{placeholder}</span>}
