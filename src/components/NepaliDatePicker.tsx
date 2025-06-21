@@ -549,6 +549,7 @@ const NepaliDatePicker = ({
           {days.map((dayData, index) => (
             <button
               key={index}
+              type="button"
               disabled={dayData.isDisabled}
               className={`bikramsambat-datepicker-calendar-cell ${
                 !dayData.isCurrentMonth ? "opacity-50" : ""
@@ -557,7 +558,9 @@ const NepaliDatePicker = ({
               } ${dayData.isDisabled ? "disabled" : ""} ${
                 dayData.isSaturday ? "saturday" : ""
               }`}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 if (dayData.isCurrentMonth && !dayData.isDisabled) {
                   handleDateSelect({
                     year: displayedMonthYear.year,
@@ -565,6 +568,10 @@ const NepaliDatePicker = ({
                     day: dayData.day,
                   });
                 }
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
               }}
             >
               {locale === NEPALI
@@ -589,6 +596,7 @@ const NepaliDatePicker = ({
           return (
             <Button
               key={month}
+              type="button"
               variant="ghost"
               disabled={disabled}
               className={`bikramsambat-datepicker-month-button ${
@@ -598,7 +606,17 @@ const NepaliDatePicker = ({
                   ? "selected"
                   : ""
               }`}
-              onClick={() => !disabled && handleMonthSelect(monthNumber)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!disabled) {
+                  handleMonthSelect(monthNumber);
+                }
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               {month}
             </Button>
@@ -624,12 +642,23 @@ const NepaliDatePicker = ({
           return (
             <Button
               key={year}
+              type="button"
               variant="ghost"
               disabled={disabled}
               className={`bikramsambat-datepicker-year-button ${
                 isSelected ? "selected" : ""
               } ${!isSelected && isCurrentYear ? "current-year" : ""}`}
-              onClick={() => !disabled && handleYearSelect(year)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!disabled) {
+                  handleYearSelect(year);
+                }
+              }}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               {locale === NEPALI ? englishToNepaliNumber(year) : year}
             </Button>
@@ -668,9 +697,18 @@ const NepaliDatePicker = ({
             <div className="bikramsambat-datepicker-header">
               <div className="bikramsambat-datepicker-nav">
                 <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={handlePreviousYear}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handlePreviousYear();
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
                   className="bikramsambat-nav-button"
                   disabled={
                     viewMode === "years"
@@ -685,9 +723,18 @@ const NepaliDatePicker = ({
 
                 {viewMode === "days" && (
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={handlePreviousMonth}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handlePreviousMonth();
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                     className="bikramsambat-nav-button"
                     disabled={
                       displayedMonthYear?.year === 2000 &&
@@ -700,11 +747,18 @@ const NepaliDatePicker = ({
               </div>
 
               <Button
+                type="button"
                 variant="ghost"
                 className="bikramsambat-datepicker-title"
-                onClick={() =>
-                  setViewMode(viewMode === "days" ? "months" : "years")
-                }
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setViewMode(viewMode === "days" ? "months" : "years");
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
               >
                 {viewMode === "days" && (
                   <>
@@ -725,9 +779,18 @@ const NepaliDatePicker = ({
               <div className="bikramsambat-datepicker-nav">
                 {viewMode === "days" && (
                   <Button
+                    type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={handleNextMonth}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleNextMonth();
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                     className="bikramsambat-nav-button"
                     disabled={
                       (disableFuture &&
@@ -741,9 +804,18 @@ const NepaliDatePicker = ({
                   </Button>
                 )}
                 <Button
+                  type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={handleNextYear}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleNextYear();
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
                   className="bikramsambat-nav-button"
                   disabled={
                     viewMode === "years"
@@ -768,14 +840,21 @@ const NepaliDatePicker = ({
             {showTodayButton && (
               <div className="bikramsambat-today-button-container">
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     const todayDate = "2082-02-02";
                     setDate(todayDate);
                     onChange?.(todayDate);
                     setOpen(false);
                     setViewMode("days");
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                   }}
                   disabled={
                     disableFuture &&

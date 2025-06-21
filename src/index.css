@@ -415,8 +415,11 @@
   transition: background 0.2s, color 0.2s;
   background: none;
   border: none;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: normal;
+  position: relative;
+  z-index: 1;
+  pointer-events: auto !important;
 }
 
 .bikramsambat-datepicker-calendar-cell.selected {
@@ -435,6 +438,7 @@
 .bikramsambat-datepicker-calendar-cell:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  pointer-events: none !important;
 }
 
 .bikramsambat-datepicker-calendar-cell:hover:not(:disabled) {
@@ -531,4 +535,20 @@
 .dark .bikramsambat-btn--default {
   background: #3b82f6;
   color: #fff;
+}
+
+/* Ensure all buttons in datepicker work in modals */
+.bikramsambat-datepicker button,
+.bikramsambat-datepicker .bikramsambat-btn {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 1;
+}
+
+/* Force button interactions in modal contexts */
+.modal .bikramsambat-datepicker button,
+.dialog .bikramsambat-datepicker button,
+[role="dialog"] .bikramsambat-datepicker button {
+  pointer-events: auto !important;
+  z-index: 999999999 !important;
 }
