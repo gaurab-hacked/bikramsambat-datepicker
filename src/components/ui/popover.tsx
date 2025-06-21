@@ -46,11 +46,15 @@ function PopoverContent({
   ...props
 }: PopoverContentProps) {
   return (
-    <PopoverPrimitive.Portal>
+    <PopoverPrimitive.Portal container={document.body}>
       <PopoverPrimitive.Content
         align={align}
         sideOffset={sideOffset}
         className={`bikramsambat-popover-content ${className}`}
+        style={{
+          zIndex: 999999999,
+          position: "relative",
+        }}
         {...props}
       >
         {children}

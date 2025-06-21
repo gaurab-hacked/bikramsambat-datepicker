@@ -209,17 +209,76 @@
 
 /* --- Popover Styles --- */
 .bikramsambat-popover-content {
-  z-index: 9999999;
-  background: var(--popover, #fff);
-  color: var(--popover-foreground, #222);
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-  min-width: 16rem;
-  outline: none;
-  animation: bikramsambat-fadeIn 0.2s;
+  z-index: 999999999 !important;
+  background: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 1rem !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+  min-width: 16rem !important;
+  outline: none !important;
+  animation: bikramsambat-fadeIn 0.2s !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
+
+/* Force popover to appear above modals */
+[data-radix-popper-content-wrapper] {
+  z-index: 999999999 !important;
+}
+
+/* Ensure popover portal has proper z-index */
+[data-radix-portal] {
+  z-index: 999999999 !important;
+}
+
+/* Additional z-index fixes for different modal scenarios */
+.bikramsambat-popover-content[data-state="open"] {
+  z-index: 999999999 !important;
+}
+
+/* Fix for when popover is inside modal */
+.modal .bikramsambat-popover-content,
+.dialog .bikramsambat-popover-content,
+[role="dialog"] .bikramsambat-popover-content {
+  z-index: 999999999 !important;
+  background: #ffffff !important;
+}
+
+/* Ensure datepicker popover has proper styling */
+.bikramsambat-datepicker-popover {
+  width: auto !important;
+  padding: 0 !important;
+  z-index: 999999999 !important;
+  background: #ffffff !important;
+}
+
+/* Fix for any backdrop or overlay issues */
+.bikramsambat-popover-content::before {
+  content: none !important;
+}
+
+.bikramsambat-popover-content::after {
+  content: none !important;
+}
+
+/* Ensure no backdrop filters interfere with popover */
+.bikramsambat-popover-content,
+.bikramsambat-datepicker-popover,
+.bikramsambat-datepicker-content {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-clip: padding-box !important;
+  isolation: isolate !important;
+}
+
+/* Force solid background in all scenarios */
+.bikramsambat-popover-content *,
+.bikramsambat-datepicker-content * {
+  background: inherit !important;
+}
+
 @keyframes bikramsambat-fadeIn {
   from {
     opacity: 0;
@@ -231,10 +290,12 @@
   }
 }
 
+/* Bikramsambat Datepicker Pure CSS (no Tailwind) */
+
 /* --- Datepicker Styles --- */
 .bikramsambat-datepicker {
-  background-color: var(--background, #fff);
-  color: var(--foreground, #222);
+  background-color: #ffffff !important;
+  color: #222222 !important;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
   line-height: 1.5;
@@ -242,6 +303,8 @@
   border-radius: 0.5rem;
   padding: 1rem;
   min-width: 18rem;
+  position: relative;
+  z-index: 1;
 }
 
 .bikramsambat-datepicker-trigger {
@@ -254,14 +317,40 @@
   font-weight: normal;
 }
 
-.bikramsambat-datepicker-popover {
-  width: auto;
-  padding: 0;
-  z-index: 9999999999999999999;
-}
-
 .bikramsambat-datepicker-content {
   padding: 0.75rem 1rem;
+  background: #ffffff !important;
+  border-radius: 0.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure content is always visible in modals */
+.bikramsambat-datepicker-content * {
+  background: inherit;
+}
+
+/* Force background on all datepicker elements */
+.bikramsambat-datepicker-header,
+.bikramsambat-datepicker-calendar,
+.bikramsambat-datepicker-calendar-header,
+.bikramsambat-datepicker-months-grid,
+.bikramsambat-datepicker-years-grid {
+  background: #ffffff !important;
+}
+
+/* Additional modal-specific fixes */
+.modal .bikramsambat-datepicker,
+.dialog .bikramsambat-datepicker,
+[role="dialog"] .bikramsambat-datepicker {
+  z-index: 999999999 !important;
+}
+
+.modal .bikramsambat-datepicker-content,
+.dialog .bikramsambat-datepicker-content,
+[role="dialog"] .bikramsambat-datepicker-content {
+  background: #ffffff !important;
+  z-index: 999999999 !important;
 }
 
 .bikramsambat-datepicker-header {
@@ -431,11 +520,6 @@
 }
 .bikramsambat-text-center {
   text-align: center;
-}
-
-/* Z-index fix for popover */
-[data-radix-popper-content-wrapper] {
-  z-index: 999999999 !important;
 }
 
 /* Dark mode support */
