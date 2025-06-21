@@ -1,24 +1,29 @@
-````markdown
-# 🗓️ Nepali DatePicker
+# 🗓️ bikramsambat-datepicker
 
-A beautiful and feature-rich Nepali (Bikram Sambat) date picker component for React applications. Supports dual language display (English/Nepali) with full Bikram Sambat calendar functionality.
+A beautiful, accessible, and feature-rich Nepali (Bikram Sambat) date picker component for React. Supports dual language (English/Nepali), full Bikram Sambat calendar, and easy integration.
+
+## ✨ Features
+
+- 🎯 **CSS Scoped**: Component styles are scoped to prevent conflicts with global CSS
+- 🌍 **Dual Language**: Support for both English and Nepali display
+- 📅 **Full BS Calendar**: Complete Bikram Sambat calendar implementation
+- 🎨 **Customizable**: Easy styling and theming options
+- ♿ **Accessible**: Built with accessibility in mind
+- 📱 **Responsive**: Works on all screen sizes
 
 ## 📦 Installation
 
 ```bash
 npm install bikramsambat-datepicker
-```
-````
-
-```bash
+# or
 yarn add bikramsambat-datepicker
-```
-
-```bash
+# or
 pnpm add bikramsambat-datepicker
 ```
 
-## 🚀 Quick Start
+## 🚀 Usage
+
+### Basic Example
 
 ```tsx
 import React, { useState } from "react";
@@ -28,141 +33,93 @@ function App() {
   const [selectedDate, setSelectedDate] = useState<string>("");
 
   return (
-    <div>
-      <NepaliDatePicker
-        value={selectedDate}
-        onChange={setSelectedDate}
-        placeholder="Select a date"
-        locale="ne" // or "en"
-      />
-    </div>
-  );
-}
-
-export default App;
-```
-
-## 📚 API Reference
-
-### Props
-
-| Prop              | Type                     | Default         | Description                             |
-| ----------------- | ------------------------ | --------------- | --------------------------------------- |
-| `value`           | `string \| undefined`    | `undefined`     | Selected date in YYYY-MM-DD format (BS) |
-| `onChange`        | `(date: string) => void` | `undefined`     | Callback fired when date is selected    |
-| `locale`          | `'en' \| 'ne'`           | `'ne'`          | Display language (English or Nepali)    |
-| `placeholder`     | `string`                 | `'Pick a date'` | Placeholder text when no date selected  |
-| `disabled`        | `boolean`                | `false`         | Disable the date picker                 |
-| `disableFuture`   | `boolean`                | `false`         | Disable future dates                    |
-| `showTodayButton` | `boolean`                | `false`         | Show "Today" button                     |
-| `className`       | `string`                 | `undefined`     | Additional CSS classes                  |
-
-### Date Format
-
-The component uses `YYYY-MM-DD` format for Bikram Sambat dates:
-
-- `2081-05-15` represents 15th Shrawan, 2081 BS
-
-## 🎯 Usage Examples
-
-### Basic Usage
-
-```tsx
-import NepaliDatePicker from "bikramsambat-datepicker";
-
-function BasicExample() {
-  const [date, setDate] = useState<string>("");
-
-  return (
     <NepaliDatePicker
-      value={date}
-      onChange={setDate}
-      placeholder="तारिख छान्नुहोस्"
+      value={selectedDate}
+      onChange={setSelectedDate}
+      placeholder="Select a date"
+      locale="ne" // or "en"
     />
   );
 }
 ```
 
-### English Locale
+## 🛠️ Props
+
+| Prop              | Type                     | Default         | Description                        |
+| ----------------- | ------------------------ | --------------- | ---------------------------------- |
+| `value`           | `string \| undefined`    | `undefined`     | Selected date in `YYYY-MM-DD` (BS) |
+| `onChange`        | `(date: string) => void` | `undefined`     | Callback when date is selected     |
+| `locale`          | `'en' \| 'ne'`           | `'ne'`          | Display language                   |
+| `placeholder`     | `string`                 | `'Pick a date'` | Placeholder text                   |
+| `disabled`        | `boolean`                | `false`         | Disable the date picker            |
+| `disableFuture`   | `boolean`                | `false`         | Prevent selecting future dates     |
+| `showTodayButton` | `boolean`                | `false`         | Show a "Today" button              |
+| `className`       | `string`                 | `undefined`     | Additional CSS classes             |
+
+## 🎯 More Examples
+
+**English Locale:**
 
 ```tsx
-function EnglishExample() {
-  const [date, setDate] = useState<string>("");
-
-  return (
-    <NepaliDatePicker
-      value={date}
-      onChange={setDate}
-      locale="en"
-      placeholder="Select date"
-    />
-  );
-}
+<NepaliDatePicker
+  value={date}
+  onChange={setDate}
+  locale="en"
+  placeholder="Select date"
+/>
 ```
 
-### Disable Future Dates
+**Disable Future Dates:**
 
 ```tsx
-function NoFutureExample() {
-  const [date, setDate] = useState<string>("");
-
-  return (
-    <NepaliDatePicker
-      value={date}
-      onChange={setDate}
-      disableFuture={true}
-      showTodayButton={true}
-    />
-  );
-}
+<NepaliDatePicker
+  value={date}
+  onChange={setDate}
+  disableFuture
+  showTodayButton
+/>
 ```
 
-### Custom Styling
+**Custom Styling:**
 
 ```tsx
-function StyledExample() {
-  return (
-    <NepaliDatePicker
-      className="w-full max-w-sm mx-auto"
-      value={date}
-      onChange={setDate}
-    />
-  );
-}
+<NepaliDatePicker
+  className="w-full max-w-sm mx-auto"
+  value={date}
+  onChange={setDate}
+/>
 ```
 
-### Form Integration
+**Form Integration (react-hook-form):**
 
 ```tsx
 import { useForm } from "react-hook-form";
-
 function FormExample() {
   const { register, handleSubmit, setValue, watch } = useForm();
   const dateValue = watch("nepaliDate");
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="space-y-4">
-        <label>Nepali Date</label>
-        <NepaliDatePicker
-          value={dateValue}
-          onChange={(date) => setValue("nepaliDate", date)}
-          placeholder="जन्म मिति छान्नुहोस्"
-        />
-        <button type="submit">Submit</button>
-      </div>
+    <form onSubmit={handleSubmit(console.log)}>
+      <NepaliDatePicker
+        value={dateValue}
+        onChange={(date) => setValue("nepaliDate", date)}
+        placeholder="जन्म मिति छान्नुहोस्"
+      />
+      <button type="submit">Submit</button>
     </form>
   );
 }
 ```
 
-## 🎨 Styling
+## 🎨 Styling & CSS Scoping
 
-The component uses CSS classes that can be customized:
+The component automatically scopes its styles to prevent conflicts with global CSS. All component styles are contained within the `.bikramsambat-datepicker` class.
+
+### Custom Theming
+
+You can override the component's CSS variables:
 
 ```css
-/* Custom styling example */
-.nepali-datepicker {
+.bikramsambat-datepicker {
   --background: #ffffff;
   --foreground: #0f172a;
   --primary: #2563eb;
@@ -170,24 +127,31 @@ The component uses CSS classes that can be customized:
   --border: #e2e8f0;
   --radius: 0.5rem;
 }
+```
 
-/* Saturday styling (red color) */
-.nepali-datepicker .saturday {
-  color: #ef4444;
-}
+### Dark Mode
 
-/* Today highlight */
-.nepali-datepicker .today {
-  background-color: #f1f5f9;
-  font-weight: 600;
+The component automatically supports dark mode when the parent has the `.dark` class:
+
+```css
+.dark .bikramsambat-datepicker {
+  --background: #0f172a;
+  --foreground: #ffffff;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
 }
 ```
 
-## 🔧 TypeScript Support
+### Special Day Styling
 
-Full TypeScript definitions included:
+- **Saturday**: `.bikramsambat-datepicker .saturday { color: #ef4444; }`
+- **Today**: `.bikramsambat-datepicker .today { background: #f1f5f9; font-weight: 600; }`
 
-```tsx
+## 🔧 TypeScript
+
+Type definitions are included:
+
+```ts
 interface NepaliDatePickerProps {
   value?: string;
   onChange?: (date: string) => void;
@@ -199,6 +163,22 @@ interface NepaliDatePickerProps {
   className?: string;
 }
 ```
+
+## 📝 Notes
+
+- Dates are in Bikram Sambat (`YYYY-MM-DD` format).
+- The component is fully controlled: pass `value` and `onChange`.
+- Supports both English and Nepali display.
+- CSS is automatically scoped to prevent global style conflicts.
+- Works with any CSS framework or global styles.
+
+## 🧑‍💻 Contributing
+
+PRs and issues welcome!
+
+## 📄 License
+
+MIT
 
 ## 📅 Calendar Data
 

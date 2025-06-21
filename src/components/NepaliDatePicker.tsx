@@ -664,152 +664,155 @@ const NepaliDatePicker = ({
       : { year: today.bsYear, month: today.bsMonth });
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant={"outline"}
-          className={cn(
-            "hover:bg-card w-full min-w-[180px] justify-between px-3 text-left font-normal",
-            !value && "text-muted-foreground",
-            className,
-            disabled && "cursor-not-allowed opacity-50"
-          )}
-          disabled={disabled}
-          {...otherProps}
+    <div className="bikramsambat-datepicker">
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant={"outline"}
+            className={cn(
+              "hover:bg-card w-full min-w-[180px] justify-between px-3 text-left font-normal",
+              !value && "text-muted-foreground",
+              className,
+              disabled && "cursor-not-allowed opacity-50"
+            )}
+            disabled={disabled}
+            {...otherProps}
+          >
+            {date ? formatNepaliDate(date, locale) : <span>{placeholder}</span>}
+            <CalendarIcon className="h-4 w-4" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          align="start"
+          disablePortal
+          className="w-auto !z-[9999999999999999999] p-0"
         >
-          {date ? formatNepaliDate(date, locale) : <span>{placeholder}</span>}
-          <CalendarIcon className="h-4 w-4" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        align="start"
-        disablePortal
-        className="w-auto !z-[9999999999999999999] p-0"
-      >
-        <div className="px-3 py-2">
-          <div className="mb-1 flex items-center justify-between border-b pb-1">
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePreviousYear}
-                className="h-8 w-8 p-0"
-                disabled={
-                  viewMode === "years"
-                    ? yearRange.start <= 2000
-                    : displayedMonthYear
-                    ? displayedMonthYear.year <= 2000
-                    : false
-                }
-              >
-                <ChevronsLeft className="h-4 w-4" />
-              </Button>
-
-              {viewMode === "days" && (
+          <div className="px-3 py-2">
+            <div className="mb-1 flex items-center justify-between border-b pb-1">
+              <div className="flex gap-1">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={handlePreviousMonth}
+                  onClick={handlePreviousYear}
                   className="h-8 w-8 p-0"
                   disabled={
-                    displayedMonthYear?.year === 2000 &&
-                    displayedMonthYear?.month === 1
+                    viewMode === "years"
+                      ? yearRange.start <= 2000
+                      : displayedMonthYear
+                      ? displayedMonthYear.year <= 2000
+                      : false
                   }
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronsLeft className="h-4 w-4" />
                 </Button>
-              )}
-            </div>
 
-            <Button
-              variant="ghost"
-              className="px-4 font-medium select-none"
-              onClick={() =>
-                setViewMode(viewMode === "days" ? "months" : "years")
-              }
-            >
-              {viewMode === "days" && (
-                <>
-                  {months[locale][displayMonthYear.month - 1]}{" "}
-                  {locale === NEPALI
+                {viewMode === "days" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handlePreviousMonth}
+                    className="h-8 w-8 p-0"
+                    disabled={
+                      displayedMonthYear?.year === 2000 &&
+                      displayedMonthYear?.month === 1
+                    }
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              <Button
+                variant="ghost"
+                className="px-4 font-medium select-none"
+                onClick={() =>
+                  setViewMode(viewMode === "days" ? "months" : "years")
+                }
+              >
+                {viewMode === "days" && (
+                  <>
+                    {months[locale][displayMonthYear.month - 1]}{" "}
+                    {locale === NEPALI
+                      ? englishToNepaliNumber(displayMonthYear.year)
+                      : displayMonthYear.year}
+                  </>
+                )}
+                {viewMode === "months" &&
+                  (locale === NEPALI
                     ? englishToNepaliNumber(displayMonthYear.year)
-                    : displayMonthYear.year}
-                </>
-              )}
-              {viewMode === "months" &&
-                (locale === NEPALI
-                  ? englishToNepaliNumber(displayMonthYear.year)
-                  : displayMonthYear.year)}
-              {viewMode === "years" && `${yearRange.start} - ${yearRange.end}`}
-            </Button>
+                    : displayMonthYear.year)}
+                {viewMode === "years" &&
+                  `${yearRange.start} - ${yearRange.end}`}
+              </Button>
 
-            <div className="flex gap-1">
-              {viewMode === "days" && (
+              <div className="flex gap-1">
+                {viewMode === "days" && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleNextMonth}
+                    className="h-8 w-8 p-0"
+                    disabled={
+                      (disableFuture &&
+                        displayMonthYear.year >= today.bsYear &&
+                        displayMonthYear.month >= today.bsMonth) ||
+                      (displayedMonthYear?.year === 2099 &&
+                        displayedMonthYear?.month === 12)
+                    }
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={handleNextMonth}
+                  onClick={handleNextYear}
                   className="h-8 w-8 p-0"
                   disabled={
-                    (disableFuture &&
-                      displayMonthYear.year >= today.bsYear &&
-                      displayMonthYear.month >= today.bsMonth) ||
-                    (displayedMonthYear?.year === 2099 &&
-                      displayedMonthYear?.month === 12)
+                    viewMode === "years"
+                      ? (disableFuture && yearRange.end >= today.bsYear) ||
+                        yearRange.end >= 2099
+                      : displayedMonthYear
+                      ? (disableFuture &&
+                          displayedMonthYear.year >= today.bsYear) ||
+                        displayedMonthYear.year >= 2099
+                      : false
                   }
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronsRight className="h-4 w-4" />
                 </Button>
-              )}
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleNextYear}
-                className="h-8 w-8 p-0"
-                disabled={
-                  viewMode === "years"
-                    ? (disableFuture && yearRange.end >= today.bsYear) ||
-                      yearRange.end >= 2099
-                    : displayedMonthYear
-                    ? (disableFuture &&
-                        displayedMonthYear.year >= today.bsYear) ||
-                      displayedMonthYear.year >= 2099
-                    : false
-                }
-              >
-                <ChevronsRight className="h-4 w-4" />
-              </Button>
+              </div>
             </div>
+
+            {viewMode === "days" && renderDaysView()}
+            {viewMode === "months" && renderMonthsView()}
+            {viewMode === "years" && renderYearsView()}
+
+            {showTodayButton && (
+              <div className="mt-4 flex justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    const todayDate = "2082-02-02";
+                    setDate(todayDate);
+                    onChange?.(todayDate);
+                    setOpen(false);
+                    setViewMode("days");
+                  }}
+                  disabled={
+                    disableFuture &&
+                    isDisabled(today.bsYear, today.bsMonth, today.bsDay)
+                  }
+                >
+                  {locale === NEPALI ? "आज" : "Today"}
+                </Button>
+              </div>
+            )}
           </div>
-
-          {viewMode === "days" && renderDaysView()}
-          {viewMode === "months" && renderMonthsView()}
-          {viewMode === "years" && renderYearsView()}
-
-          {showTodayButton && (
-            <div className="mt-4 flex justify-center">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  const todayDate = "2082-02-02";
-                  setDate(todayDate);
-                  onChange?.(todayDate);
-                  setOpen(false);
-                  setViewMode("days");
-                }}
-                disabled={
-                  disableFuture &&
-                  isDisabled(today.bsYear, today.bsMonth, today.bsDay)
-                }
-              >
-                {locale === NEPALI ? "आज" : "Today"}
-              </Button>
-            </div>
-          )}
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
 };
 
